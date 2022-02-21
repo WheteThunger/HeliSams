@@ -315,7 +315,7 @@ namespace Oxide.Plugins
 
         private void OnSamSiteTargetScan(SamSite samSite, List<ISamSiteTarget> targetList)
         {
-            if (SAMTargetComponent.SAMTargetComponents.Count == 0)
+            if (samSite.IsInDefenderMode() || SAMTargetComponent.SAMTargetComponents.Count == 0)
                 return;
 
             var samSitePosition = samSite.transform.position;
