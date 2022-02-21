@@ -45,18 +45,21 @@ Default configuration:
 
 - `Debug rocket prediction` (`true` or `false`) -- Determines whether to show rocket trajectory to nearby admins.
 - `Debug rocket damage` (`true` or `false`) -- Determines whether to show rocket damage on each hit to nearby admins.
+
+The following options are available for each type of helicopter.
+
 - `Can be targeted by static SAM Sites` (`true` or `false`) -- Determines whether each type of helicopter can be targeted by static Sam Sites (e.g., by monument Sam Sites).
 - `Targeting range` -- Determines how far away Sam Sites can target each type of helicopter.
-  - In vanilla, Sam Sites have a targeting range of `150.0` for vehicles, and `225.0` for MLRS rockets.
+  - Vanilla targeting range is `150.0` against vehicles, and `225.0` against MLRS rockets.
 - `Rocket speed multiplier` -- Determines how quickly Sam Site rockets will travel when fired at each type of helicopter.
-  - In vanilla, rockets fired at vehicles use `1.0`, while rockets fired at MLRS rockets use `2.25`.
-  - Default for `Patrol Helicopter` is `1.5` to deal with the fact that it can change directly quickly.
+  - Vanilla speed multiplier is `1.0` against vehicles, and `2.25` against MLRS rockets.
+  - Default for `Patrol Helicopter` is `1.5` to deal with the fact that it can change direction quickly.
 - `Rocket damage multiplier` -- Determines how much to multiply Sam Site rocket damage against each type of helicopter.
-  - Default for `NPC CH47 Helicopter` is `8.0` which causes Sam Site rockets to deal `200` damage each, requiring a total of `20` rockets to destroy one heli (`4000` HP).
-  - Default for `Player CH47 Helicopter` is `2.0` which causes Sam Site rockets to deal `50` damage each, requiring a total of `20` rockets to destroy one heli (`1000` HP).
-  - Default for `Patrol Helicopter` is `8.0` which causes Sam Site rockets to deal `200` damage each, requiring a toal of `50` rockets to destroy one heli (`10000` HP).
+  - Default for `NPC CH47 Helicopter` is `8.0` which causes Sam Site rockets to deal `200` damage, requiring a total of `20` rockets to destroy one heli (`4000` HP).
+  - Default for `Player CH47 Helicopter` is `2.0` which causes Sam Site rockets to deal `50` damage, requiring a total of `20` rockets to destroy one heli (`1000` HP).
+  - Default for `Patrol Helicopter` is `8.0` which causes Sam Site rockets to deal `200` damage, requiring a toal of `50` rockets to destroy one heli (`10000` HP).
 - `Seconds between rocket bursts` -- Determines how frequently Sam Sites can fire rocket bursts at each type of helicopter.
-  - In vanilla, rocket burst delay is `5` seconds against vehicles and `3.5` seconds against MLRS rockets.
+  - Vanilla time between rocket bursts is `5` seconds against vehicles, and `3.5` seconds against MLRS rockets.
 
 ## Credits
 
