@@ -342,8 +342,6 @@ namespace Oxide.Plugins
             if (targetComponent == null)
                 return;
 
-            var player = BasePlayer.activePlayerList.FirstOrDefault();
-
             var ch47 = targetComponent.Entity as CH47Helicopter;
             if (ch47 != null)
             {
