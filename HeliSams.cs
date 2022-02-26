@@ -120,7 +120,7 @@ namespace Oxide.Plugins
         private void OnEntityTakeDamage(CH47Helicopter ch47, HitInfo info)
         {
             var samSite = info.Initiator as SamSite;
-            if (ReferenceEquals(samSite, null))
+            if (samSite == null)
             {
                 return;
             }
@@ -142,7 +142,7 @@ namespace Oxide.Plugins
         private void OnEntityTakeDamage(BaseHelicopter patrolHeli, HitInfo info)
         {
             var samSite = info.Initiator as SamSite;
-            if (ReferenceEquals(samSite, null))
+            if (samSite == null)
             {
                 return;
             }
@@ -155,6 +155,13 @@ namespace Oxide.Plugins
                 {
                     ShowRocketDamage(info.HitPositionWorld, info.damageTypes.Total());
                 }
+            }
+
+            if (_pluginConfig.PatrolHeli.CanRetaliateAgainstSamSites
+                && patrolHeli.myAI != null
+                && patrolHeli.myAI.CanInterruptState())
+            {
+                patrolHeli.myAI.State_Strafe_Enter(samSite.transform.position + Vector3.up, shouldUseNapalm: false);
             }
         }
 
@@ -402,6 +409,13 @@ namespace Oxide.Plugins
             }
         }
 
+        [JsonObject(MemberSerialization.OptIn)]
+        private class PatrolHeliSettings : HeliSettings
+        {
+            [JsonProperty("Can retaliate against Sam Sites")]
+            public bool CanRetaliateAgainstSamSites = false;
+        }
+
         private class Configuration : SerializableConfiguration
         {
             [JsonProperty("Debug rocket prediction")]
@@ -423,7 +437,7 @@ namespace Oxide.Plugins
             };
 
             [JsonProperty("Patrol Helicopter")]
-            public HeliSettings PatrolHeli = new HeliSettings
+            public PatrolHeliSettings PatrolHeli = new PatrolHeliSettings
             {
                 RocketDamageMultiplier = 4,
                 RocketSpeedMultiplier = 1.5f,

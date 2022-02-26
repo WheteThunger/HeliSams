@@ -2,6 +2,7 @@
 
 - Allows Sam Sites to target CH47 Helicopters (Chinooks)
 - Allows Sam Sites to target Patrol Helicopters
+- Allows Patrol Helicopters to retaliate against Sam Sites
 
 If you are looking to prevent Sam Sites from targeting your own Minicopters, Scrap Transport Helicopters, etc., then look for that feature in other plugins such as [SAM Site Authorization](https://umod.org/plugins/sam-site-authorization).
 
@@ -34,6 +35,7 @@ Default configuration:
     "Seconds between rocket bursts": 5.0
   },
   "Patrol Helicopter": {
+    "Can retaliate against Sam Sites": false,
     "Can be targeted by static SAM Sites": true,
     "Targeting range": 150.0,
     "Rocket speed multiplier": 1.5,
@@ -48,6 +50,7 @@ Default configuration:
 
 The following options are available for each type of helicopter.
 
+- `Can retaliate against Sam Sites` (`true` or `false`) -- (Patrol Helicopter only) Determines whether the Patrol Helicopter can fire rockets back at Sam Sites.
 - `Can be targeted by static SAM Sites` (`true` or `false`) -- Determines whether each type of helicopter can be targeted by static Sam Sites (e.g., by monument Sam Sites).
 - `Targeting range` -- Determines how far away Sam Sites can target each type of helicopter.
   - Vanilla targeting range is `150.0` against vehicles, and `225.0` against MLRS rockets.
