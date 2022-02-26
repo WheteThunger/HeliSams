@@ -23,7 +23,7 @@ Default configuration:
     "Can be targeted by static SAM Sites": true,
     "Targeting range": 150.0,
     "Rocket speed multiplier": 1.0,
-    "Rocket damage multiplier": 8.0,
+    "Rocket damage multiplier": 4.0,
     "Seconds between rocket bursts": 5.0
   },
   "Player CH47 Helicopter": {
@@ -37,7 +37,7 @@ Default configuration:
     "Can be targeted by static SAM Sites": true,
     "Targeting range": 150.0,
     "Rocket speed multiplier": 1.5,
-    "Rocket damage multiplier": 8.0,
+    "Rocket damage multiplier": 4.0,
     "Seconds between rocket bursts": 5.0
   }
 }
@@ -55,9 +55,9 @@ The following options are available for each type of helicopter.
   - Vanilla speed multiplier is `1.0` against vehicles, and `2.25` against MLRS rockets.
   - Default for `Patrol Helicopter` is `1.5` to deal with the fact that it can change direction quickly.
 - `Rocket damage multiplier` -- Determines how much to multiply Sam Site rocket damage against each type of helicopter.
-  - Default for `NPC CH47 Helicopter` is `8.0` which causes Sam Site rockets to deal `200` damage, requiring a total of `20` rockets to destroy one heli (`4000` HP).
+  - Default for `NPC CH47 Helicopter` is `4.0` which causes Sam Site rockets to deal `100` damage, requiring a total of `40` rockets to destroy one heli (`4000` HP).
   - Default for `Player CH47 Helicopter` is `2.0` which causes Sam Site rockets to deal `50` damage, requiring a total of `20` rockets to destroy one heli (`1000` HP).
-  - Default for `Patrol Helicopter` is `8.0` which causes Sam Site rockets to deal `200` damage, requiring a toal of `50` rockets to destroy one heli (`10000` HP).
+  - Default for `Patrol Helicopter` is `4.0` which causes Sam Site rockets to deal `100` damage, requiring a total of `100` rockets to destroy one heli (`10000` HP).
 - `Seconds between rocket bursts` -- Determines how frequently Sam Sites can fire rocket bursts at each type of helicopter.
   - Vanilla time between rocket bursts is `5` seconds against vehicles, and `3.5` seconds against MLRS rockets.
 

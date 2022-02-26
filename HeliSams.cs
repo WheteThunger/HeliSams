@@ -413,7 +413,7 @@ namespace Oxide.Plugins
             [JsonProperty("NPC CH47 Helicopter")]
             public HeliSettings CH47Npc = new HeliSettings
             {
-                RocketDamageMultiplier = 8,
+                RocketDamageMultiplier = 4,
             };
 
             [JsonProperty("Player CH47 Helicopter")]
@@ -425,7 +425,7 @@ namespace Oxide.Plugins
             [JsonProperty("Patrol Helicopter")]
             public HeliSettings PatrolHeli = new HeliSettings
             {
-                RocketDamageMultiplier = 8,
+                RocketDamageMultiplier = 4,
                 RocketSpeedMultiplier = 1.5f,
             };
         }
