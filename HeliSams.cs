@@ -378,6 +378,9 @@ namespace Oxide.Plugins
         private class HeliSettings
         {
             [JsonProperty("Can be targeted by static SAM Sites")]
+            public bool DeprecatedCanBeTargetedByStaticSamSites { set { CanBeTargetedByStaticSamSites = value; } }
+
+            [JsonProperty("Can be targeted by static Sam Sites")]
             public bool CanBeTargetedByStaticSamSites = true;
 
             [JsonProperty("Targeting range")]

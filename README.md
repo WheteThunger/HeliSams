@@ -21,14 +21,14 @@ Default configuration:
   "Debug rocket prediction": false,
   "Debug rocket damage": false,
   "NPC CH47 Helicopter": {
-    "Can be targeted by static SAM Sites": true,
+    "Can be targeted by static Sam Sites": true,
     "Targeting range": 150.0,
     "Rocket speed multiplier": 1.0,
     "Rocket damage multiplier": 4.0,
     "Seconds between rocket bursts": 5.0
   },
   "Player CH47 Helicopter": {
-    "Can be targeted by static SAM Sites": true,
+    "Can be targeted by static Sam Sites": true,
     "Targeting range": 150.0,
     "Rocket speed multiplier": 1.0,
     "Rocket damage multiplier": 2.0,
@@ -36,7 +36,7 @@ Default configuration:
   },
   "Patrol Helicopter": {
     "Can retaliate against Sam Sites": false,
-    "Can be targeted by static SAM Sites": true,
+    "Can be targeted by static Sam Sites": true,
     "Targeting range": 150.0,
     "Rocket speed multiplier": 1.5,
     "Rocket damage multiplier": 4.0,
@@ -51,7 +51,7 @@ Default configuration:
 The following options are available for each type of helicopter.
 
 - `Can retaliate against Sam Sites` (`true` or `false`) -- (Patrol Helicopter only) Determines whether the Patrol Helicopter can fire rockets back at Sam Sites.
-- `Can be targeted by static SAM Sites` (`true` or `false`) -- Determines whether each type of helicopter can be targeted by static Sam Sites (e.g., by monument Sam Sites).
+- `Can be targeted by static Sam Sites` (`true` or `false`) -- Determines whether each type of helicopter can be targeted by static Sam Sites (e.g., by monument Sam Sites).
 - `Targeting range` -- Determines how far away Sam Sites can target each type of helicopter.
   - Vanilla targeting range is `150.0` against vehicles, and `225.0` against MLRS rockets.
 - `Rocket speed multiplier` -- Determines how quickly Sam Site rockets will travel when fired at each type of helicopter.
