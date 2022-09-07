@@ -18,8 +18,6 @@ Default configuration:
 
 ```json
 {
-  "Debug rocket prediction": false,
-  "Debug rocket damage": false,
   "NPC CH47 Helicopter": {
     "Can be targeted by static Sam Sites": true,
     "Targeting range": 150.0,
@@ -28,6 +26,7 @@ Default configuration:
     "Seconds between rocket bursts": 5.0
   },
   "Player CH47 Helicopter": {
+    "Check cupboard auth": false,
     "Can be targeted by static Sam Sites": true,
     "Targeting range": 150.0,
     "Rocket speed multiplier": 1.0,
@@ -41,16 +40,22 @@ Default configuration:
     "Rocket speed multiplier": 1.5,
     "Rocket damage multiplier": 4.0,
     "Seconds between rocket bursts": 5.0
-  }
+  },
+  "Debug rocket prediction": false,
+  "Debug rocket damage": false
 }
 ```
 
-- `Debug rocket prediction` (`true` or `false`) -- Determines whether to show rocket trajectory to nearby admins.
-- `Debug rocket damage` (`true` or `false`) -- Determines whether to show rocket damage on each hit to nearby admins.
+The following option is only available for the `Player CH47 Helicopter` section.
 
-The following options are available for each type of helicopter.
+- `Check cupboard auth` (`true` or `false`) -- Determines whether player Sam Sites will ignore player CH47 helicopters when a player in the helicopter is authorized to the Sam Site's tool cupboard. While `true`, Sam Sites will function like in the [SAM Site Authorization](https://umod.org/plugins/sam-site-authorization) plugin.
 
-- `Can retaliate against Sam Sites` (`true` or `false`) -- (Patrol Helicopter only) Determines whether the Patrol Helicopter can fire rockets back at Sam Sites.
+The following option is only available for the `Patrol Helicopter` section.
+
+- `Can retaliate against Sam Sites` (`true` or `false`) -- Determines whether the Patrol Helicopter can fire rockets back at Sam Sites.
+
+The following options are available for all types of helicopters.
+
 - `Can be targeted by static Sam Sites` (`true` or `false`) -- Determines whether each type of helicopter can be targeted by static Sam Sites (e.g., by monument Sam Sites).
 - `Targeting range` -- Determines how far away Sam Sites can target each type of helicopter.
   - Vanilla targeting range is `150.0` against vehicles, and `225.0` against MLRS rockets.
@@ -63,6 +68,11 @@ The following options are available for each type of helicopter.
   - Default for `Patrol Helicopter` is `4.0` which causes Sam Site rockets to deal `100` damage, requiring a total of `100` rockets to destroy one heli (`10000` HP).
 - `Seconds between rocket bursts` -- Determines how frequently Sam Sites can fire rocket bursts at each type of helicopter.
   - Vanilla time between rocket bursts is `5` seconds against vehicles, and `3.5` seconds against MLRS rockets.
+
+The following options are configured globally.
+
+- `Debug rocket prediction` (`true` or `false`) -- Determines whether to show rocket trajectory to nearby admins.
+- `Debug rocket damage` (`true` or `false`) -- Determines whether to show rocket damage on each hit to nearby admins.
 
 ## Credits
 

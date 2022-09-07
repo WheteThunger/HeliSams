@@ -6,10 +6,11 @@ using System.Linq;
 using UnityEngine;
 using VLB;
 using static SamSite;
+using static BaseVehicle;
 
 namespace Oxide.Plugins
 {
-    [Info("Heli Sams", "WhiteThunder & Whispers88", "2.0.0")]
+    [Info("Heli Sams", "WhiteThunder & Whispers88", "2.1.0")]
     [Description("Allows Sam Sites to target CH47 and Patrol Helicopters")]
     internal class HeliSams : CovalencePlugin
     {
@@ -20,12 +21,12 @@ namespace Oxide.Plugins
         private const string PermissionCh47Npc = "helisams.ch47.npc";
         private const string PermissionCh47Player = "helisams.ch47.player";
         private const string PermissionPatrolHeli = "helisams.patrolheli";
+        private const string CH47NpcPrefab = "assets/prefabs/npc/ch47/ch47scientists.entity.prefab";
 
-        private const string CH47EntityNpcShortName = "ch47scientists.entity";
-
-        private readonly object _boxedFalse = false;
+        private readonly object False = false;
 
         private static Configuration _pluginConfig;
+        private static uint _ch47NpcPrefabId;
 
         #endregion
 
@@ -40,6 +41,8 @@ namespace Oxide.Plugins
 
         private void OnServerInitialized()
         {
+            _ch47NpcPrefabId = StringPool.Get(CH47NpcPrefab);
+
             foreach (var entity in BaseNetworkable.serverEntities)
             {
                 var ch47 = entity as CH47Helicopter;
@@ -98,20 +101,20 @@ namespace Oxide.Plugins
                 return null;
             }
 
-            var targetEntity = targetComponent.Entity;
-            if (targetEntity is CH47Helicopter)
+            var ch47 = targetComponent.Entity as CH47Helicopter;
+            if ((object)ch47 != null)
             {
-                if (IsNpcCH47(targetEntity))
+                if (IsNpcCH47(ch47))
                 {
-                    return SamSiteHasPermission(samSite, PermissionCh47Npc) ? null : _boxedFalse;
+                    return SamSiteHasPermission(samSite, PermissionCh47Npc) ? null : False;
                 }
 
-                return SamSiteHasPermission(samSite, PermissionCh47Player) ? null : _boxedFalse;
+                return ShouldTargetPlayerCH47(samSite, ch47) ? null : False;
             }
 
-            if (targetEntity is BaseHelicopter)
+            if (targetComponent.Entity is BaseHelicopter)
             {
-                return SamSiteHasPermission(samSite, PermissionPatrolHeli) ? null : _boxedFalse;
+                return SamSiteHasPermission(samSite, PermissionPatrolHeli) ? null : False;
             }
 
             return null;
@@ -169,17 +172,104 @@ namespace Oxide.Plugins
 
         #region Helper Methods
 
-        private static bool IsNpcCH47(BaseEntity entity)
+        private static bool IsNpcCH47(CH47Helicopter ch47)
         {
-            return entity.ShortPrefabName == CH47EntityNpcShortName;
+            return ch47.prefabID == _ch47NpcPrefabId;
+        }
+
+        private static bool IsOccupied(BaseCombatEntity entity, List<MountPointInfo> mountPoints)
+        {
+            if (mountPoints != null)
+            {
+                foreach (var mountPoint in mountPoints)
+                {
+                    var player = mountPoint.mountable.GetMounted();
+                    if ((object)player != null)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            foreach (var child in entity.children)
+            {
+                if (child is BasePlayer)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsAuthed(BuildingPrivlidge cupboard, ulong userId)
+        {
+            foreach (var entry in cupboard.authorizedPlayers)
+            {
+                if (entry.userid == userId)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool ShouldTargetPlayerCH47(SamSite samSite, CH47Helicopter ch47)
+        {
+            if (!SamSiteHasPermission(samSite, PermissionCh47Player))
+            {
+                return false;
+            }
+
+            var mountPoints = ch47.mountPoints;
+            if (!IsOccupied(ch47, mountPoints))
+            {
+                return false;
+            }
+
+            if (!_pluginConfig.CH47Player.CheckCupboardAuth)
+            {
+                return true;
+            }
+
+            var cupboard = samSite.GetBuildingPrivilege();
+            if ((object)cupboard == null)
+            {
+                return true;
+            }
+
+            if (mountPoints != null)
+            {
+                foreach (var mountPoint in mountPoints)
+                {
+                    var player = mountPoint.mountable.GetMounted();
+                    if ((object)player != null && IsAuthed(cupboard, player.userID))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            foreach (var child in ch47.children)
+            {
+                var player = child as BasePlayer;
+                if ((object)player != null)
+                {
+                    if (IsAuthed(cupboard, player.userID))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         private bool SamSiteHasPermission(SamSite samSite, string perm)
         {
             if (samSite.OwnerID == 0)
-            {
                 return false;
-            }
 
             return permission.UserHasPermission(samSite.OwnerID.ToString(), perm);
         }
@@ -248,9 +338,10 @@ namespace Oxide.Plugins
                 Entity = GetComponent<BaseEntity>();
                 _transform = Entity.transform;
 
-                if (Entity is CH47Helicopter)
+                var ch47 = Entity as CH47Helicopter;
+                if ((object)ch47 != null)
                 {
-                    if (IsNpcCH47(Entity))
+                    if (IsNpcCH47(ch47))
                     {
                         TargetRangeSquared = Mathf.Pow(_pluginConfig.CH47Npc.TargetRange, 2);
                         _targetType = _pluginConfig.CH47Npc.TargetType;
@@ -298,9 +389,10 @@ namespace Oxide.Plugins
                     return true;
                 }
 
-                if (Entity is CH47Helicopter)
+                var ch47 = Entity as CH47Helicopter;
+                if ((object)ch47 != null)
                 {
-                    return IsNpcCH47(Entity)
+                    return IsNpcCH47(ch47)
                         ? _pluginConfig.CH47Npc.CanBeTargetedByStaticSamSites
                         : _pluginConfig.CH47Player.CanBeTargetedByStaticSamSites;
                 }
@@ -417,14 +509,15 @@ namespace Oxide.Plugins
             public bool CanRetaliateAgainstSamSites = false;
         }
 
+        [JsonObject(MemberSerialization.OptIn)]
+        private class PlayerCH47Settings : HeliSettings
+        {
+            [JsonProperty("Check cupboard auth")]
+            public bool CheckCupboardAuth = false;
+        }
+
         private class Configuration : SerializableConfiguration
         {
-            [JsonProperty("Debug rocket prediction")]
-            public bool DebugRocketPrediction;
-
-            [JsonProperty("Debug rocket damage")]
-            public bool DebugRocketDamage;
-
             [JsonProperty("NPC CH47 Helicopter")]
             public HeliSettings CH47Npc = new HeliSettings
             {
@@ -432,7 +525,7 @@ namespace Oxide.Plugins
             };
 
             [JsonProperty("Player CH47 Helicopter")]
-            public HeliSettings CH47Player = new HeliSettings
+            public PlayerCH47Settings CH47Player = new PlayerCH47Settings
             {
                 RocketDamageMultiplier = 2,
             };
@@ -443,6 +536,12 @@ namespace Oxide.Plugins
                 RocketDamageMultiplier = 4,
                 RocketSpeedMultiplier = 1.5f,
             };
+
+            [JsonProperty("Debug rocket prediction")]
+            public bool DebugRocketPrediction;
+
+            [JsonProperty("Debug rocket damage")]
+            public bool DebugRocketDamage;
         }
 
         private Configuration GetDefaultConfig() => new Configuration();
