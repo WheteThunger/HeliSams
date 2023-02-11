@@ -1,3 +1,7 @@
+## Video Tutorial
+
+[![Video Tutorial](https://img.youtube.com/vi/ZztJvZgypEU/maxresdefault.jpg)](https://www.youtube.com/watch?v=ZztJvZgypEU)
+
 ## Features
 
 - Allows Sam Sites to target CH47 Helicopters (Chinooks)
