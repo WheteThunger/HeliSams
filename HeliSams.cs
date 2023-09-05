@@ -10,7 +10,7 @@ using static BaseVehicle;
 
 namespace Oxide.Plugins
 {
-    [Info("Heli Sams", "WhiteThunder & Whispers88", "2.1.0")]
+    [Info("Heli Sams", "WhiteThunder & Whispers88", "2.1.1")]
     [Description("Allows Sam Sites to target CH47 and Patrol Helicopters")]
     internal class HeliSams : CovalencePlugin
     {
@@ -142,7 +142,7 @@ namespace Oxide.Plugins
             }
         }
 
-        private void OnEntityTakeDamage(BaseHelicopter patrolHeli, HitInfo info)
+        private void OnEntityTakeDamage(PatrolHelicopter patrolHeli, HitInfo info)
         {
             var samSite = info.Initiator as SamSite;
             if (samSite == null)
@@ -447,12 +447,12 @@ namespace Oxide.Plugins
                 return;
             }
 
-            var partrolHeli = targetComponent.Entity as BaseHelicopter;
-            if (partrolHeli != null)
+            var patrolHeli = targetComponent.Entity as PatrolHelicopter;
+            if (patrolHeli != null)
             {
-                PatrolHelicopterAI Ai = ((BaseHelicopter)targetComponent.Entity).myAI;
-                Vector3 targetVelocity = (Ai.GetLastMoveDir() * Ai.GetMoveSpeed()) * 1.25f;
-                Vector3 estimatedPoint = PredictedPos(partrolHeli, samSite, targetVelocity, targetComponent.SAMTargetType.speedMultiplier);
+                PatrolHelicopterAI Ai = patrolHeli.myAI;
+                Vector3 targetVelocity = Ai.GetLastMoveDir() * Ai.GetMoveSpeed() * 1.25f;
+                Vector3 estimatedPoint = PredictedPos(patrolHeli, samSite, targetVelocity, targetComponent.SAMTargetType.speedMultiplier);
                 samSite.currentAimDir = (estimatedPoint - samSite.eyePoint.transform.position).normalized;
                 if (_pluginConfig.DebugRocketPrediction)
                 {
