@@ -10,7 +10,7 @@ using static BaseVehicle;
 
 namespace Oxide.Plugins
 {
-    [Info("Heli Sams", "WhiteThunder & Whispers88", "2.1.1")]
+    [Info("Heli Sams", "WhiteThunder & Whispers88", "2.1.2")]
     [Description("Allows Sam Sites to target CH47 and Patrol Helicopters")]
     internal class HeliSams : CovalencePlugin
     {
@@ -52,7 +52,7 @@ namespace Oxide.Plugins
                     continue;
                 }
 
-                var patrolHeli = entity as BaseHelicopter;
+                var patrolHeli = entity as PatrolHelicopter;
                 if (patrolHeli != null)
                 {
                     OnEntitySpawned(patrolHeli);
@@ -72,7 +72,7 @@ namespace Oxide.Plugins
                     continue;
                 }
 
-                var patrolHeli = entity as BaseHelicopter;
+                var patrolHeli = entity as PatrolHelicopter;
                 if (patrolHeli != null)
                 {
                     SAMTargetComponent.RemoveFromEntity(patrolHeli);
@@ -85,11 +85,11 @@ namespace Oxide.Plugins
 
         private void OnEntitySpawned(CH47Helicopter entity) => SAMTargetComponent.AddToEntity(entity);
 
-        private void OnEntitySpawned(BaseHelicopter entity) => SAMTargetComponent.AddToEntity(entity);
+        private void OnEntitySpawned(PatrolHelicopter entity) => SAMTargetComponent.AddToEntity(entity);
 
         private void OnEntityKill(CH47Helicopter entity) => SAMTargetComponent.RemoveFromEntity(entity);
 
-        private void OnEntityKill(BaseHelicopter entity) => SAMTargetComponent.RemoveFromEntity(entity);
+        private void OnEntityKill(PatrolHelicopter entity) => SAMTargetComponent.RemoveFromEntity(entity);
 
         private object OnSamSiteTarget(SamSite samSite, SAMTargetComponent targetComponent)
         {
@@ -112,7 +112,7 @@ namespace Oxide.Plugins
                 return ShouldTargetPlayerCH47(samSite, ch47) ? null : False;
             }
 
-            if (targetComponent.Entity is BaseHelicopter)
+            if (targetComponent.Entity is PatrolHelicopter)
             {
                 return SamSiteHasPermission(samSite, PermissionPatrolHeli) ? null : False;
             }
@@ -353,7 +353,7 @@ namespace Oxide.Plugins
                     }
                 }
 
-                if (Entity is BaseHelicopter)
+                if (Entity is PatrolHelicopter)
                 {
                     TargetRangeSquared = Mathf.Pow(_pluginConfig.PatrolHeli.TargetRange, 2);
                     _targetType = _pluginConfig.PatrolHeli.TargetType;
@@ -397,7 +397,7 @@ namespace Oxide.Plugins
                         : _pluginConfig.CH47Player.CanBeTargetedByStaticSamSites;
                 }
 
-                if (Entity is BaseHelicopter)
+                if (Entity is PatrolHelicopter)
                 {
                     return  _pluginConfig.PatrolHeli.CanBeTargetedByStaticSamSites;
                 }
