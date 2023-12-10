@@ -93,28 +93,21 @@ namespace Oxide.Plugins
 
         private object OnSamSiteTarget(SamSite samSite, SAMTargetComponent targetComponent)
         {
-            if (samSite.staticRespawn)
-            {
-                // Whether static sam sites target helis has already been determined by this point.
-                // - If enabled in the config, the heli will be targeted.
-                // - If disabled in the config, this hook won't even be called.
-                return null;
-            }
-
             var ch47 = targetComponent.Entity as CH47Helicopter;
             if ((object)ch47 != null)
             {
                 if (IsNpcCH47(ch47))
                 {
-                    return SamSiteHasPermission(samSite, PermissionCh47Npc) ? null : False;
+                    return ShouldTargetNpcCH47(samSite, ch47) ? null : False;
                 }
 
                 return ShouldTargetPlayerCH47(samSite, ch47) ? null : False;
             }
 
-            if (targetComponent.Entity is PatrolHelicopter)
+            var patrolHeli = targetComponent.Entity as PatrolHelicopter;
+            if ((object)patrolHeli != null)
             {
-                return SamSiteHasPermission(samSite, PermissionPatrolHeli) ? null : False;
+                return ShouldTargetPatrolHelicopter(samSite, patrolHeli) ? null : False;
             }
 
             return null;
@@ -215,8 +208,24 @@ namespace Oxide.Plugins
             return false;
         }
 
+        private bool ShouldTargetNpcCH47(SamSite samSite, CH47Helicopter ch47)
+        {
+            // Always allow static sam sites since this will only be called if that is enabled in the config.
+            if (samSite.staticRespawn)
+                return true;
+
+            if (!SamSiteHasPermission(samSite, PermissionCh47Npc))
+                return false;
+
+            return true;
+        }
+
         private bool ShouldTargetPlayerCH47(SamSite samSite, CH47Helicopter ch47)
         {
+            // Always allow static sam sites since this will only be called if that is enabled in the config.
+            if (samSite.staticRespawn)
+                return true;
+
             if (!SamSiteHasPermission(samSite, PermissionCh47Player))
             {
                 return false;
@@ -261,6 +270,37 @@ namespace Oxide.Plugins
                         return false;
                     }
                 }
+            }
+
+            return true;
+        }
+
+        private bool ShouldTargetPatrolHelicopter(SamSite samSite, PatrolHelicopter patrolHeli)
+        {
+            // Don't allow static sam sites to target owned helicopters if cupboard auth is required.
+            // Otherwise, allow static sam sites since this will only be called if that is enabled in the config.
+            if (samSite.staticRespawn)
+                return !_pluginConfig.PatrolHeli.RequireCupboardAuth;
+
+            if (!SamSiteHasPermission(samSite, PermissionPatrolHeli))
+                return false;
+
+            // Always allow unowned Patrol Helicopters to be targeted by Sam Sites that have permission.
+            if (patrolHeli.OwnerID == 0)
+                return true;
+
+            if (_pluginConfig.PatrolHeli.RequireCupboardAuth)
+            {
+                var cupboard = samSite.GetBuildingPrivilege();
+
+                // Don't allow Sam Sites without a Tool Cupboard to target owned Patrol Helicopters.
+                // This could possibly be changed in the future, to follow the Sam Site ownership,
+                // if the config option is renamed for clarity.
+                if ((object)cupboard == null)
+                    return false;
+
+                // Only target the Patrol Helicopter if owned by an authorized player.
+                return IsAuthed(cupboard, patrolHeli.OwnerID);
             }
 
             return true;
@@ -505,6 +545,9 @@ namespace Oxide.Plugins
         [JsonObject(MemberSerialization.OptIn)]
         private class PatrolHeliSettings : HeliSettings
         {
+            [JsonProperty("Require cupboard auth for owned helicopters")]
+            public bool RequireCupboardAuth = false;
+
             [JsonProperty("Can retaliate against Sam Sites")]
             public bool CanRetaliateAgainstSamSites = false;
         }
