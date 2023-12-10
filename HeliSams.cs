@@ -208,6 +208,11 @@ namespace Oxide.Plugins
             return false;
         }
 
+        private static BuildingPrivlidge GetSamSiteToolCupboard(SamSite samSite)
+        {
+            return samSite.GetBuildingPrivilege(samSite.WorldSpaceBounds());
+        }
+
         private bool ShouldTargetNpcCH47(SamSite samSite, CH47Helicopter ch47)
         {
             // Always allow static sam sites since this will only be called if that is enabled in the config.
@@ -242,7 +247,7 @@ namespace Oxide.Plugins
                 return true;
             }
 
-            var cupboard = samSite.GetBuildingPrivilege();
+            var cupboard = GetSamSiteToolCupboard(samSite);
             if ((object)cupboard == null)
             {
                 return true;
@@ -291,7 +296,7 @@ namespace Oxide.Plugins
 
             if (_pluginConfig.PatrolHeli.RequireCupboardAuth)
             {
-                var cupboard = samSite.GetBuildingPrivilege();
+                var cupboard = GetSamSiteToolCupboard(samSite);
 
                 // Don't allow Sam Sites without a Tool Cupboard to target owned Patrol Helicopters.
                 // This could possibly be changed in the future, to follow the Sam Site ownership,
