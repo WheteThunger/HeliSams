@@ -25,7 +25,7 @@ namespace Oxide.Plugins
 
         private readonly object False = false;
 
-        private static Configuration _pluginConfig;
+        private static Configuration _config;
         private static uint _ch47NpcPrefabId;
 
         #endregion
@@ -80,7 +80,7 @@ namespace Oxide.Plugins
                 }
             }
 
-            _pluginConfig = null;
+            _config = null;
         }
 
         private void OnEntitySpawned(CH47Helicopter entity) => SAMTargetComponent.AddToEntity(entity);
@@ -97,18 +97,14 @@ namespace Oxide.Plugins
             if ((object)ch47 != null)
             {
                 if (IsNpcCH47(ch47))
-                {
                     return ShouldTargetNpcCH47(samSite, ch47) ? null : False;
-                }
 
                 return ShouldTargetPlayerCH47(samSite, ch47) ? null : False;
             }
 
             var patrolHeli = targetComponent.Entity as PatrolHelicopter;
             if ((object)patrolHeli != null)
-            {
                 return ShouldTargetPatrolHelicopter(samSite, patrolHeli) ? null : False;
-            }
 
             return null;
         }
@@ -117,18 +113,16 @@ namespace Oxide.Plugins
         {
             var samSite = info.Initiator as SamSite;
             if (samSite == null)
-            {
                 return;
-            }
 
             var damageMultiplier = IsNpcCH47(ch47)
-                ? _pluginConfig.CH47Npc.RocketDamageMultiplier
-                : _pluginConfig.CH47Player.RocketDamageMultiplier;
+                ? _config.CH47Npc.RocketDamageMultiplier
+                : _config.CH47Player.RocketDamageMultiplier;
 
             if (damageMultiplier > 1)
             {
                 info.damageTypes.ScaleAll(damageMultiplier);
-                if (_pluginConfig.DebugRocketDamage)
+                if (_config.DebugRocketDamage)
                 {
                     ShowRocketDamage(info.HitPositionWorld, info.damageTypes.Total());
                 }
@@ -139,21 +133,19 @@ namespace Oxide.Plugins
         {
             var samSite = info.Initiator as SamSite;
             if (samSite == null)
-            {
                 return;
-            }
 
-            var damageMultiplier = _pluginConfig.PatrolHeli.RocketDamageMultiplier;
+            var damageMultiplier = _config.PatrolHeli.RocketDamageMultiplier;
             if (damageMultiplier > 1)
             {
                 info.damageTypes.ScaleAll(damageMultiplier);
-                if (_pluginConfig.DebugRocketDamage)
+                if (_config.DebugRocketDamage)
                 {
                     ShowRocketDamage(info.HitPositionWorld, info.damageTypes.Total());
                 }
             }
 
-            if (_pluginConfig.PatrolHeli.CanRetaliateAgainstSamSites
+            if (_config.PatrolHeli.CanRetaliateAgainstSamSites
                 && patrolHeli.myAI != null
                 && patrolHeli.myAI.CanInterruptState())
             {
@@ -178,18 +170,14 @@ namespace Oxide.Plugins
                 {
                     var player = mountPoint.mountable.GetMounted();
                     if ((object)player != null)
-                    {
                         return true;
-                    }
                 }
             }
 
             foreach (var child in entity.children)
             {
                 if (child is BasePlayer)
-                {
                     return true;
-                }
             }
 
             return false;
@@ -200,9 +188,7 @@ namespace Oxide.Plugins
             foreach (var entry in cupboard.authorizedPlayers)
             {
                 if (entry.userid == userId)
-                {
                     return true;
-                }
             }
 
             return false;
@@ -232,26 +218,18 @@ namespace Oxide.Plugins
                 return true;
 
             if (!SamSiteHasPermission(samSite, PermissionCh47Player))
-            {
                 return false;
-            }
 
             var mountPoints = ch47.mountPoints;
             if (!IsOccupied(ch47, mountPoints))
-            {
                 return false;
-            }
 
-            if (!_pluginConfig.CH47Player.CheckCupboardAuth)
-            {
+            if (!_config.CH47Player.CheckCupboardAuth)
                 return true;
-            }
 
             var cupboard = GetSamSiteToolCupboard(samSite);
             if ((object)cupboard == null)
-            {
                 return true;
-            }
 
             if (mountPoints != null)
             {
@@ -259,9 +237,7 @@ namespace Oxide.Plugins
                 {
                     var player = mountPoint.mountable.GetMounted();
                     if ((object)player != null && IsAuthed(cupboard, player.userID))
-                    {
                         return false;
-                    }
                 }
             }
 
@@ -271,9 +247,7 @@ namespace Oxide.Plugins
                 if ((object)player != null)
                 {
                     if (IsAuthed(cupboard, player.userID))
-                    {
                         return false;
-                    }
                 }
             }
 
@@ -285,7 +259,7 @@ namespace Oxide.Plugins
             // Don't allow static sam sites to target owned helicopters if cupboard auth is required.
             // Otherwise, allow static sam sites since this will only be called if that is enabled in the config.
             if (samSite.staticRespawn)
-                return !_pluginConfig.PatrolHeli.RequireCupboardAuth;
+                return !_config.PatrolHeli.RequireCupboardAuth;
 
             if (!SamSiteHasPermission(samSite, PermissionPatrolHeli))
                 return false;
@@ -294,7 +268,7 @@ namespace Oxide.Plugins
             if (patrolHeli.OwnerID == 0)
                 return true;
 
-            if (_pluginConfig.PatrolHeli.RequireCupboardAuth)
+            if (_config.PatrolHeli.RequireCupboardAuth)
             {
                 var cupboard = GetSamSiteToolCupboard(samSite);
 
@@ -319,16 +293,15 @@ namespace Oxide.Plugins
             return permission.UserHasPermission(samSite.OwnerID.ToString(), perm);
         }
 
-        private Vector3 PredictedPos(BaseEntity target, SamSite samSite, Vector3 targetVelocity, float projectilSpeedMultiplier)
+        private Vector3 PredictedPos(BaseEntity target, SamSite samSite, Vector3 targetVelocity, float projectileSpeedMultiplier)
         {
             Vector3 targetpos = target.transform.TransformPoint(target.transform.GetBounds().center);
             Vector3 displacement = targetpos - samSite.eyePoint.transform.position;
-            float projectileSpeed = samSite.projectileTest.Get().GetComponent<ServerProjectile>().speed * projectilSpeedMultiplier;
+            float projectileSpeed = samSite.projectileTest.Get().GetComponent<ServerProjectile>().speed * projectileSpeedMultiplier;
             float targetMoveAngle = Vector3.Angle(-displacement, targetVelocity) * Mathf.Deg2Rad;
             if (targetVelocity.magnitude == 0 || targetVelocity.magnitude > projectileSpeed && Mathf.Sin(targetMoveAngle) / projectileSpeed > Mathf.Cos(targetMoveAngle) / targetVelocity.magnitude)
-            {
                 return targetpos;
-            }
+
             float shootAngle = Mathf.Asin(Mathf.Sin(targetMoveAngle) * targetVelocity.magnitude / projectileSpeed);
             return targetpos + targetVelocity * displacement.magnitude / Mathf.Sin(Mathf.PI - targetMoveAngle - shootAngle) * Mathf.Sin(shootAngle) / targetVelocity.magnitude;
         }
@@ -388,20 +361,20 @@ namespace Oxide.Plugins
                 {
                     if (IsNpcCH47(ch47))
                     {
-                        TargetRangeSquared = Mathf.Pow(_pluginConfig.CH47Npc.TargetRange, 2);
-                        _targetType = _pluginConfig.CH47Npc.TargetType;
+                        TargetRangeSquared = Mathf.Pow(_config.CH47Npc.TargetRange, 2);
+                        _targetType = _config.CH47Npc.TargetType;
                     }
                     else
                     {
-                        TargetRangeSquared = Mathf.Pow(_pluginConfig.CH47Player.TargetRange, 2);
-                        _targetType = _pluginConfig.CH47Player.TargetType;
+                        TargetRangeSquared = Mathf.Pow(_config.CH47Player.TargetRange, 2);
+                        _targetType = _config.CH47Player.TargetType;
                     }
                 }
 
                 if (Entity is PatrolHelicopter)
                 {
-                    TargetRangeSquared = Mathf.Pow(_pluginConfig.PatrolHeli.TargetRange, 2);
-                    _targetType = _pluginConfig.PatrolHeli.TargetType;
+                    TargetRangeSquared = Mathf.Pow(_config.PatrolHeli.TargetRange, 2);
+                    _targetType = _config.PatrolHeli.TargetType;
 
                     _child = Entity.gameObject.CreateChild();
                     _child.gameObject.layer = (int)Rust.Layer.Vehicle_World;
@@ -438,14 +411,12 @@ namespace Oxide.Plugins
                 if ((object)ch47 != null)
                 {
                     return IsNpcCH47(ch47)
-                        ? _pluginConfig.CH47Npc.CanBeTargetedByStaticSamSites
-                        : _pluginConfig.CH47Player.CanBeTargetedByStaticSamSites;
+                        ? _config.CH47Npc.CanBeTargetedByStaticSamSites
+                        : _config.CH47Player.CanBeTargetedByStaticSamSites;
                 }
 
                 if (Entity is PatrolHelicopter)
-                {
-                    return  _pluginConfig.PatrolHeli.CanBeTargetedByStaticSamSites;
-                }
+                    return _config.PatrolHeli.CanBeTargetedByStaticSamSites;
 
                 return false;
             }
@@ -482,27 +453,29 @@ namespace Oxide.Plugins
             var ch47 = targetComponent.Entity as CH47Helicopter;
             if (ch47 != null)
             {
-                Vector3 targetVelocity = targetComponent.gameObject.GetComponent<Rigidbody>().velocity;
-                Vector3 estimatedPoint = PredictedPos(ch47, samSite, targetVelocity, targetComponent.SAMTargetType.speedMultiplier);
+                var targetVelocity = targetComponent.gameObject.GetComponent<Rigidbody>().velocity;
+                var estimatedPoint = PredictedPos(ch47, samSite, targetVelocity, targetComponent.SAMTargetType.speedMultiplier);
                 samSite.currentAimDir = (estimatedPoint - samSite.eyePoint.transform.position).normalized;
-                if (_pluginConfig.DebugRocketPrediction)
+                if (_config.DebugRocketPrediction)
                 {
                     ShowRocketPath(samSite.eyePoint.position, estimatedPoint);
                 }
+
                 return;
             }
 
             var patrolHeli = targetComponent.Entity as PatrolHelicopter;
             if (patrolHeli != null)
             {
-                PatrolHelicopterAI Ai = patrolHeli.myAI;
-                Vector3 targetVelocity = Ai.GetLastMoveDir() * Ai.GetMoveSpeed() * 1.25f;
-                Vector3 estimatedPoint = PredictedPos(patrolHeli, samSite, targetVelocity, targetComponent.SAMTargetType.speedMultiplier);
+                var patrolHeliAI = patrolHeli.myAI;
+                var targetVelocity = patrolHeliAI.GetLastMoveDir() * patrolHeliAI.GetMoveSpeed() * 1.25f;
+                var estimatedPoint = PredictedPos(patrolHeli, samSite, targetVelocity, targetComponent.SAMTargetType.speedMultiplier);
                 samSite.currentAimDir = (estimatedPoint - samSite.eyePoint.transform.position).normalized;
-                if (_pluginConfig.DebugRocketPrediction)
+                if (_config.DebugRocketPrediction)
                 {
                     ShowRocketPath(samSite.transform.position, estimatedPoint);
                 }
+
                 return;
             }
         }
@@ -564,7 +537,7 @@ namespace Oxide.Plugins
             public bool CheckCupboardAuth = false;
         }
 
-        private class Configuration : SerializableConfiguration
+        private class Configuration : BaseConfiguration
         {
             [JsonProperty("NPC CH47 Helicopter")]
             public HeliSettings CH47Npc = new HeliSettings
@@ -594,9 +567,9 @@ namespace Oxide.Plugins
 
         private Configuration GetDefaultConfig() => new Configuration();
 
-        #region Configuration Boilerplate
+        #region Configuration Helpers
 
-        private class SerializableConfiguration
+        private class BaseConfiguration
         {
             public string ToJson() => JsonConvert.SerializeObject(this);
 
@@ -625,7 +598,7 @@ namespace Oxide.Plugins
             }
         }
 
-        private bool MaybeUpdateConfig(SerializableConfiguration config)
+        private bool MaybeUpdateConfig(BaseConfiguration config)
         {
             var currentWithDefaults = config.ToDictionary();
             var currentRaw = Config.ToDictionary(x => x.Key, x => x.Value);
@@ -634,7 +607,7 @@ namespace Oxide.Plugins
 
         private bool MaybeUpdateConfigDict(Dictionary<string, object> currentWithDefaults, Dictionary<string, object> currentRaw)
         {
-            bool changed = false;
+            var changed = false;
 
             foreach (var key in currentWithDefaults.Keys)
             {
@@ -665,20 +638,20 @@ namespace Oxide.Plugins
             return changed;
         }
 
-        protected override void LoadDefaultConfig() => _pluginConfig = GetDefaultConfig();
+        protected override void LoadDefaultConfig() => _config = GetDefaultConfig();
 
         protected override void LoadConfig()
         {
             base.LoadConfig();
             try
             {
-                _pluginConfig = Config.ReadObject<Configuration>();
-                if (_pluginConfig == null)
+                _config = Config.ReadObject<Configuration>();
+                if (_config == null)
                 {
                     throw new JsonException();
                 }
 
-                if (MaybeUpdateConfig(_pluginConfig))
+                if (MaybeUpdateConfig(_config))
                 {
                     LogWarning("Configuration appears to be outdated; updating and saving");
                     SaveConfig();
@@ -695,7 +668,7 @@ namespace Oxide.Plugins
         protected override void SaveConfig()
         {
             Log($"Configuration changes saved to {Name}.json");
-            Config.WriteObject(_pluginConfig, true);
+            Config.WriteObject(_config, true);
         }
 
         #endregion
