@@ -523,7 +523,7 @@ namespace Oxide.Plugins
         [JsonObject(MemberSerialization.OptIn)]
         private class PatrolHeliSettings : HeliSettings
         {
-            [JsonProperty("Require cupboard auth for owned helicopters")]
+            [JsonProperty("Require cupboard auth for owned helicopters", DefaultValueHandling = DefaultValueHandling.Ignore)]
             public bool RequireCupboardAuth = false;
 
             [JsonProperty("Can retaliate against Sam Sites")]

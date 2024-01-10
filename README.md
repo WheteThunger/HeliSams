@@ -38,7 +38,6 @@ Default configuration:
     "Seconds between rocket bursts": 5.0
   },
   "Patrol Helicopter": {
-    "Require cupboard auth for owned helicopters": false,
     "Can retaliate against Sam Sites": false,
     "Can be targeted by static Sam Sites": true,
     "Targeting range": 150.0,
@@ -58,7 +57,6 @@ The following option is only available for the `Player CH47 Helicopter` section.
 The following options are only available for the `Patrol Helicopter` section.
 
 - `Can retaliate against Sam Sites` (`true` or `false`) -- Determines whether the Patrol Helicopter can fire rockets back at Sam Sites.
-- `Require cupboard auth for owned helicopters` (`true` or `false`) -- While `true`, if the Patrol Helicopter is owned by a player (i.e., another plugin set the helicopter's `OwnerID` property to a player's Steam ID), then a Sam Site can only target the Patrol Helicopter if the Patrol Helicopter owner is authorized on the Sam Site's tool cupboard. This is intended for servers where players can summon Patrol Helicopters to their location, to prevent interference from other players' Sam Sites. Additionally, enabling this option will prevent static Sam Sites from targeting owned Patrol Helicopters.
 
 The following options are available for all types of helicopters.
 
