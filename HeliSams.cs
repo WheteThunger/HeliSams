@@ -10,7 +10,7 @@ using static BaseVehicle;
 
 namespace Oxide.Plugins
 {
-    [Info("Heli Sams", "WhiteThunder & Whispers88", "2.1.2")]
+    [Info("Heli Sams", "WhiteThunder & Whispers88", "2.1.3")]
     [Description("Allows Sam Sites to target CH47 and Patrol Helicopters")]
     internal class HeliSams : CovalencePlugin
     {
@@ -143,13 +143,6 @@ namespace Oxide.Plugins
                 {
                     ShowRocketDamage(info.HitPositionWorld, info.damageTypes.Total());
                 }
-            }
-
-            if (_config.PatrolHeli.CanRetaliateAgainstSamSites
-                && patrolHeli.myAI != null
-                && patrolHeli.myAI.CanInterruptState())
-            {
-                patrolHeli.myAI.State_Strafe_Enter(samSite.transform.position + Vector3.up, shouldUseNapalm: false);
             }
         }
 
@@ -525,9 +518,6 @@ namespace Oxide.Plugins
         {
             [JsonProperty("Require cupboard auth for owned helicopters", DefaultValueHandling = DefaultValueHandling.Ignore)]
             public bool RequireCupboardAuth = false;
-
-            [JsonProperty("Can retaliate against Sam Sites")]
-            public bool CanRetaliateAgainstSamSites = false;
         }
 
         [JsonObject(MemberSerialization.OptIn)]

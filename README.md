@@ -6,7 +6,6 @@
 
 - Allows Sam Sites to target CH47 Helicopters (Chinooks)
 - Allows Sam Sites to target Patrol Helicopters
-- Allows Patrol Helicopters to retaliate against Sam Sites
 
 If you are looking to prevent Sam Sites from targeting your own Minicopters, Scrap Transport Helicopters, etc., then look for that feature in other plugins such as [SAM Site Authorization](https://umod.org/plugins/sam-site-authorization).
 
@@ -38,7 +37,6 @@ Default configuration:
     "Seconds between rocket bursts": 5.0
   },
   "Patrol Helicopter": {
-    "Can retaliate against Sam Sites": false,
     "Can be targeted by static Sam Sites": true,
     "Targeting range": 150.0,
     "Rocket speed multiplier": 1.5,
@@ -53,10 +51,6 @@ Default configuration:
 The following option is only available for the `Player CH47 Helicopter` section.
 
 - `Check cupboard auth` (`true` or `false`) -- Determines whether player Sam Sites will ignore player CH47 helicopters when a player in the helicopter is authorized to the Sam Site's tool cupboard. While `true`, Sam Sites will function like in the [SAM Site Authorization](https://umod.org/plugins/sam-site-authorization) plugin.
-
-The following options are only available for the `Patrol Helicopter` section.
-
-- `Can retaliate against Sam Sites` (`true` or `false`) -- Determines whether the Patrol Helicopter can fire rockets back at Sam Sites.
 
 The following options are available for all types of helicopters.
 
