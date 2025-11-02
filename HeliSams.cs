@@ -10,7 +10,7 @@ using static BaseVehicle;
 
 namespace Oxide.Plugins
 {
-    [Info("Heli Sams", "WhiteThunder & Whispers88", "2.1.3")]
+    [Info("Heli Sams", "WhiteThunder & Whispers88", "2.1.4")]
     [Description("Allows Sam Sites to target CH47 and Patrol Helicopters")]
     internal class HeliSams : CovalencePlugin
     {
@@ -176,17 +176,6 @@ namespace Oxide.Plugins
             return false;
         }
 
-        private static bool IsAuthed(BuildingPrivlidge cupboard, ulong userId)
-        {
-            foreach (var entry in cupboard.authorizedPlayers)
-            {
-                if (entry.userid == userId)
-                    return true;
-            }
-
-            return false;
-        }
-
         private static BuildingPrivlidge GetSamSiteToolCupboard(SamSite samSite)
         {
             return samSite.GetBuildingPrivilege(samSite.WorldSpaceBounds());
@@ -229,7 +218,7 @@ namespace Oxide.Plugins
                 foreach (var mountPoint in mountPoints)
                 {
                     var player = mountPoint.mountable.GetMounted();
-                    if ((object)player != null && IsAuthed(cupboard, player.userID))
+                    if ((object)player != null && cupboard.IsAuthed(player.userID))
                         return false;
                 }
             }
@@ -239,7 +228,7 @@ namespace Oxide.Plugins
                 var player = child as BasePlayer;
                 if ((object)player != null)
                 {
-                    if (IsAuthed(cupboard, player.userID))
+                    if (cupboard.IsAuthed(player.userID))
                         return false;
                 }
             }
@@ -272,7 +261,7 @@ namespace Oxide.Plugins
                     return false;
 
                 // Only target the Patrol Helicopter if owned by an authorized player.
-                return IsAuthed(cupboard, patrolHeli.OwnerID);
+                return cupboard.IsAuthed(patrolHeli.OwnerID);
             }
 
             return true;
